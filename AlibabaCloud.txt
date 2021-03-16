@@ -1,0 +1,303 @@
+什么是Nacos：一个更易于构建云原生应用的动态服务发现，配置管理和服务管理平台。
+就是注册中心+配置中心的组合。
+Nacos=Eureka+Config+ Bus ,用过后面三个的，都会知道有很多bug
+
+下载地址
+https://github.com/alibaba/nacos/tags
+
+解压之后，一定搭建好nacos的数据库环境配置
+conf\nacos-mysql.sql 弄到数据库中
+
+运行bin下面的startup.cmd   单机启动  默认是集群
+startup.cmd -m standalone
+
+之后创建服务提供者cloudalibaba-provider-payment9003 | cloudalibaba-provider-payment9002
+nacos会自动提供负载均衡
+
+然后编写服务调用者
+注意一定要添加配置类 否则无法使用服务的负载均衡
+
+几种注册中心的比较
+名称                      CAP模型               控制台管理           社区活跃度
+Eureka                      AP                  支持              低 （2.x版本闭源）
+Zookeeper                   CP                  不               中
+Consul                      CP                  支持              高
+Nacos                       AP                  支持              高
+
+目前NacosAP和CP 2种都是支持的。
+CAP理论核心：一个分布式系统不可能同时很好的满足 一致性，可用性，分区容错 这三个需求。
+将Nosql分成了 CA  CP  AP
+CA,单点集群，满足一致性，可用性， 可扩展性不太强大
+CP 一致性，分区容忍，性能不是特别高
+AP 可用性，分区容忍  通常可能对一致性要求低一些。
+
+C是所有节点在同一时间看到的数据是一致的，而A的定义是所有的请求都会收到响应
+
+何时选择用何种模式？
+一般来说
+如果不需要存储服务级别的信息且服务实例是通过nacos-client
+注册，并能够保持心跳上报，那么就可可以选择AP模式，当前主流的服务如SpringCloud，Dubbo，
+都适用于AP模式，AP模式为了服务的可能性而减弱了一致性，因此AP模式下只支持注册临时实例。
+
+
+如果需要在服务级别编辑或存储配置信息，那么CP是必须，K8S服务和DNS服务则适用于CP模式。
+CP模式下则支持注册持久化实例，此时则是以Raft协议为集群运行模式，该模式下注册实例之前必须
+先注册服务，如果服务不存在，则会返回错误。
+
+这样切换
+curl -X PUT '$NACOS_SERVER:8848/nacos/v1/ns/operator/switches?entry=serverMode&value=CP'
+
+Nacos作为配置中心
+新建cloudalibaba-config-nacos-client3377
+@RefreshScope 通过Spring Cloud原生注解RefreshScope实现配置自动更新
+
+
+在Nacos SpringCloud中  dataId完整格式如下
+${prefix}-${spring.profile.active}.${file-extension}
+
+prefix默认为spring.application.name的值,也可以通过配置项spring.cloud.nacos.config.prefix
+来配置。
+
+spring.profile.active即为当前环境对应的profile,详情可以参考SpringBoot文档。
+注意：当spring.profile.active为空时,对应的连接符 - 也将不存在，dataId的拼接格式
+变成${prefix}.${file-extension}
+
+
+
+file-extension为配置内容的数据格式，可以通过配置项 spring.cloud.nacos.config.file-extension
+来配置。目前只支持properties和yaml类型。
+
+最好先成全名 不要省略${prefix}
+创建nacos-config-client-dev.yaml文  内容为  info后面的可以为字符串 也可以不加字符串
+config:
+    info: config in for dev ,from nacos config center.verson=1
+
+之后就修改config配置文件，直接调用会直接刷新。
+
+
+Namespace和Group+DataID 三者的关系
+类似于java的包名和类名
+最外层的namespace是可以用于区分部署环境的。Group和DataID逻辑上区分两个目标对象
+默认情况
+Namespace=public            Group=DEFAULT_GROUP         默认Cluster是DEFAULT
+
+Nacos默认的命令空间是public，Namespace主要用来实现隔离
+比方说我们现在有三个环境，开发，测试，生产环境，我们就可以创建三个Namespace，
+不同的Namespace之间是隔离的。
+Group默认是DEFAULT_GROUP，Group可以把不同的微服务划分到同一个分组里面去。
+
+Service就是微服务；一个service可以包含多个Cluster（集群）
+Nacos默认Cluster是DEFAULT，Cluster是对指定微服务的一个虚拟划分。
+
+比方说为了容灾，将Service微服务分别部署在杭州机房和广州机房，
+这时就可以给杭州机房的service微服务起一个集群名称（HZ）
+给广州的机房Service微服务起一个集群名称（GZ），还可以尽量让同一个机房的微服务互相调用，
+以提升性能。
+最后是Instance就是微服务的实例。
+
+
+搭建nacos集群
+nginx下载地址
+http://nginx.org/en/download.html
+下载稳定版1.18 或者最新版1.19
+
+nginx集群+3台nacos机器+数据库集群（或者主从备份）
+先安装依赖包
+yum -y install pcre-devel
+
+yum -y install openssl-devel
+
+yum -y install gcc
+
+yum -y install lrzsz
+
+yum -y install openssh-clients
+
+或者输入
+yum -y install pcre-devel openssl-devel gcc lrzsz openssh-clients
+
+之后上传nginx安装包 解压
+进入执行
+./configure
+然后执行
+make install
+会在/usr/local/nginx 这边是生成的路径
+复制conf里面的nginx.conf到外面
+启动nginx命令
+./nginx -s stop
+./nginx -s quit
+./nginx -s reload
+然后指明配置文件
+./nginx -c   xxxxxpath
+测试nginx配置文件是否有误
+./nginx -t
+
+
+./nginx -c /app/nginx/conf/nginx.conf
+
+nacos集群搭建参考网址
+https://blog.csdn.net/molihuakai_118/article/details/108315719?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522161577856016780271545098%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=161577856016780271545098&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-2-108315719.first_rank_v2_pc_rank_v29&utm_term=springcloud+nacos%E6%90%AD%E5%BB%BA%E6%9C%8D%E5%8A%A1%E9%9B%86%E7%BE%A4
+
+下载nacos的linux版本解压  1.1.4和1.4完全是2个版本，搭建集群方式是不一样的。
+启动是执行startup.sh
+
+创建数据库并且设置编码
+CREATE DATABASE IF NOT EXISTS nacos_config DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+修改application.properties
+#将下面的配置的信息设置你的真实ip
+spring.datasource.platform=mysql
+db.num=1
+db.url.0=jdbc:mysql://192.168.232.104:3306/nacos_config?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
+db.user=root
+db.password=root
+db.password=root
+
+查看防火墙状态：firewall-cmd --state
+
+启动防火墙：systemctl start firewalld.service
+
+关闭防火墙：systemctl stop firewalld.service
+
+重启：systemctl restart firewalld.service
+
+开机启用：systemctl enable firewalld.service
+
+禁止开机启动：systemctl disable firewalld.service
+
+
+
+
+
+第1种方式  在3个机器上分别安装nacos
+备份下面这个文件
+cp cluster.conf.example cluster.conf
+
+vim cluster.conf
+
+设置端口
+192.168.16.101:8848
+192.168.16.102:8848
+192.168.16.103:8848
+
+
+
+
+之后分别启动bin路径下的startup.sh
+sh startup.sh  之后集群就可以看到效果了
+但是，每次访问都要根据id:端口访问 所以设置nginx来访问
+
+nginx配置文件在外面
+
+
+
+下载自带的jdk
+#检查是否存在jdk
+rpm -qa|grep java
+#卸载
+rpm -e --nodeps
+
+vim /etc/profile
+#set java enviroment
+export JAVA_HOME=/app/java/jdk/jdk1.8.0_281
+export JRE_HOME=/app/java/jdk/jdk1.8.0_281/jre
+export CLASSPATH=.:$JAVA_HOME/lib$:JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin/$JAVA_HOME:$PATH
+
+使配置文件生效
+[root@localhost java]# source /etc/profile
+测试
+
+java-version
+
+启动nginx指明配置文件
+[root@localhost sbin]# ./nginx -c /app/nginx/nginx-1.8.0/conf/nginx.conf
+
+
+---------------------------------------
+开始学习Sentinel熔断和限流
+官网
+https://github.com/alibaba/Sentinel/wiki/%E4%BB%8B%E7%BB%8D
+
+Hystrix缺点
+1.需要我们程序员自己手工搭建监控平台。
+2.没有一套web界面可以给我们进行更加细粒度得配置
+流控，速率控制，服务熔断，服务降级。
+
+
+阿波罗配置管理中心，只是听说
+
+Sentinel ，分布式系统的流量防卫兵
+1.独立一个组件，可以独立出来
+2.直接界面化的细粒度统一配置。（约定>配置>编码）
+都可以写在代码里面，但是我们本次还是大规模的学习使用配置和注解的方式，尽量少写代码。
+3.Sentinel 承接了阿里巴巴近 10 年的双十一大促流量的核心场景，例如秒杀
+
+怎么安装和配置
+下载地址
+https://github.com/alibaba/Sentinel/releases
+可以用1.7或者1.8
+下载jar包
+直接可以运行在java环境，需要注意，端口8080不要被占用
+java -jar sentinel-dashboard-1.7.1.jar
+之后就可以访问http://localhost:8080
+账号密码都是sentinel
+
+之后怎么整合到项目中
+新建8401项目
+cloudalibaba-sentinel-service8401
+搭建好之后访问接口进行测试
+之后再访问就可以看到效果了
+http://localhost:8080/#/dashboard/metric/cloudalibaba-sentinel-service
+
+流控规则
+资源名:唯一名称，默认请求路径
+
+针对来源：Sentinel可以针对调用者进行限流，填写微服务名，默认default(不区分来源)
+
+阈值类型/单机阈值
+    QPS（每秒钟的请求数量）：当调用该API的QPS达到阈值的时候，进行限流
+    线程数：当调用该API的线程数达到阈值的时候，进行限流。
+    (2个东西不一样，OPS：所有的请求都在外面，在外面进行拦截，一秒一次 其他的拦截。 而线程数是在门里面，
+    进行拦截，只能有一个线程)
+是否集群：不需要集群
+
+流控模式：
+    直接：API达到限流条件时，直接限流
+    关联：当关联的资源达到阈值时，就限流自己（当与A关联的资源B达到阈值后，就限流自己，简单来说，B惹事，A挂了，这种场景，比如说支付服务和下单服务，支付挂了就无法下单）。
+    链路：只记录指定链路上的流量（指定资源从入口资源进来的流量，如果达到阈值，就进行限流）【api级别的针对来源】
+
+流控效果：
+    快速失败：直接失败，抛出异常
+    Warm Up:根据codeFactor（冷加载因子，默认3）的值，从阈值/CodeFactor，经过预热时长，才达到设置的QPS阈值
+    排队等待：匀速排队，让请求以匀速的速度通过，阈值类型必须设置QPS，否则无效
+
+---------------------------------------------------
+使用流控，点击簇点链路，按钮来添加
+默认选择，针对来源选择default，阈值类型，qps，单机阈值为1 确定就可以了
+表示1秒钟内查询一次就是OK，若超过次数1，就直接--快速失败，报默认错误。
+之后快速访问的时候就会直接出错。
+
+TODO
+但是这样调用的是默认的报错信息，技术方面OK，是否应该有我们自己的后续处理
+
+
+使用postman进行并发压力测试。流控模式选择关联，对A进行编辑，
+关联资源为/testB ,当频繁调用testB， B满足了条件，A就不能使用。但是B不会挂，只有A调用的时候会报错。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

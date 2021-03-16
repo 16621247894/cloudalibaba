@@ -1,0 +1,16 @@
+target/
+
+*.class
+.classpath
+.project
+.settings/
+logs/
+
+.svn/*
+
+.idea/*
+*.iml
+# /src/test/
+*.factorypath
+rebel.xml
+/src/test/java/Jeremy/

@@ -1,0 +1,5 @@
+spring:
+  profiles:
+    active: zwq
+    #经过测试可以为qa test dev 和prod
+
