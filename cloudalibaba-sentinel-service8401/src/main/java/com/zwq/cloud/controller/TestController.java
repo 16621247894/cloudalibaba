@@ -1,6 +1,8 @@
 package com.zwq.cloud.controller;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.zwq.cloud.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -8,21 +10,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
 
-    @SentinelResource("dosomething")
-    public void getInfo(String str){
-        System.out.println("调用者"+str+"调用getInfo方法");
-    }
+    @Autowired
+    private OrderService orderService;
 
 
     @GetMapping("info1")
     public String info1(){
-        this.getInfo("info1");
+        orderService.mesage();
         return "info1";
     }
 
     @GetMapping("info2")
     public String info2(){
-        this.getInfo("info2");
+        orderService.mesage();
         return "info2";
     }
 

@@ -285,6 +285,18 @@ TODO
 关联资源为/testB ,当频繁调用testB， B满足了条件，A就不能使用。但是B不会挂，只有A调用的时候会报错。
 
 
+使用链路方式
+资源名为公共接口,为message
+入口资源为/info1
+1.yml中新增配置
+<dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-web-servlet</artifactId>
+</dependency>
+
+2.yml中修改 spring.application.cloud.sentinel.web-context-unify=false
+spring.application.cloud.sentinel.filter.enabled=false
+3.新增配置类FilterContextConfig
 
 
 
