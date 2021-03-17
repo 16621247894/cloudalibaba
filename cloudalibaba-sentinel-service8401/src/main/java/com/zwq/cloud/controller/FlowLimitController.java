@@ -34,7 +34,7 @@ public class FlowLimitController {
     public String testD()
     {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {e.printStackTrace();}
         log.info(Thread.currentThread().getName()+"\t"+"...testD 测试RT");
         return "------testD 测试RT";

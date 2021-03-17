@@ -1,15 +1,12 @@
 package com.zwq.cloud.config;
 
-import com.alibaba.csp.sentinel.adapter.servlet.CommonFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class FilterContextConfig {
 
 
-    @Bean
+   /* @Bean
     public FilterRegistrationBean sentinelFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new CommonFilter());
@@ -19,5 +16,5 @@ public class FilterContextConfig {
         registration.setName("sentinelFilter");
         registration.setOrder(1);
         return registration;
-    }
+    }*/
 }
