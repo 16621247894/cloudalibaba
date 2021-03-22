@@ -32,11 +32,14 @@ public class FlowLimitController {
 
     @GetMapping("/testD")
     public String testD()
-    {
+    {/*
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {e.printStackTrace();}
         log.info(Thread.currentThread().getName()+"\t"+"...testD 测试RT");
+        */
+        int age=10/0;
+        log.info(Thread.currentThread().getName()+"\t"+"...testD 测试异常比例");
         return "------testD 测试RT";
     }
 
