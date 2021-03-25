@@ -1,0 +1,146 @@
+1.java基础功底扎实，三年以上相关开发经验，有带队经验者优先；
+2.熟悉springboot、springcloud、jpa、MyBatis、Hibernate等开源框架及原理；
+3.熟练使用Spring MVC框架、消息队列、线程池、缓存、RPC框架；
+4.熟练使用SQL (MySQL/Oracle/MSSQL) 、NoSQL (Redis/HBase/MongoDB)?；
+5.熟练使用SVN、GIT等版本管理工具，能夠独立解决开发中常见的问题，如代码冲突，代码回滚等；
+6.熟悉Linux、Unix等主流操作系统；
+7.性格开朗乐观，责任心强，积极主动，善于沟通，具有团队精神；
+8.逻辑能力强、思维活跃，敢于接受压力和挑战、能够独立完成任务攻关；
+9.热爱技术，对Java后端技术发展有强烈的兴趣，有良好的自学能力和强烈的责任心；
+
+
+
+
+性能sql调优有哪些  
+mysql尽量升级8，有一个索引隐藏功能。   
+mybatis有几种主键映射。
+Mybatis运行原理
+Spring原理。
+BIO，BIO等
+长连接和短连接，
+duboo的协议。SpringCloud
+手写Spring和Mybatis
+HashMap中1.8
+ArrayList和linkedlist的区别，哪个更快。
+HashMap中getOrDefault，获取指定key的vlaue，获取不到设置默认值
+sql优化
+https://blog.csdn.net/zhushuai1221/article/details/51740846
+什么是跨域 怎么解决跨域。
+hbase 学习一下
+面试题
+https://www.cnblogs.com/heluan/p/8620312.html 
+CompletableFuture  异步处理的一种方式
+
+mysql有多少种日志类型：
+
+重做日志（redo log）、回滚日志（undo log）、二进制日志（binlog）、错误日志（errorlog）、慢查询日志（slow query log）、一般查询日志（general log），中继日志（relay log）
+
+1 重做日志（redo log） 作用
+确保事务的持久性。
+防止在发生故障的时间点，尚有账页未写入磁盘，在重启mysql服务的时候，根据redo log进行重做，从而达到
+事务的持久性这一特性。
+
+内容
+物理格式的日志，记录的是物理数据页面的修改的信息，其redo log是顺序写入redo log file的物理文件中去的。
+
+什么时候产生
+事务开始之后就产生redo log，redo log的落盘并不是随着事务的提交才写入的，而是在事务的执行过程中，便开始写入redo log文件中。
+
+
+什么时候释放
+当对应事务的脏页写入到磁盘之后，redo log的使命也就完成了，重做日志占用的空间就可以重用（被覆盖）。
+
+
+回滚日志（undo log）
+作用
+保存了事务发生之前的数据的一个版本，可以用于回滚，同时可以提供多版本并发控制下的读（MVCC），也即非锁定读
+
+内容
+逻辑格式的日志，在执行undo的时候，仅仅是将数据从逻辑上恢复至事务之前的状态，而不是从物理页面上操作实现的，这一点是不同于redo log的。
+
+什么时候产生
+事务开始之前，将当前是的版本生成undo log，undo 也会产生 redo 来保证undo log的可靠性
+
+什么时候释放
+当事务提交之后，undo log并不能立马被删除，
+而是放入待清理的链表，由purge线程判断是否由其他事务在使用undo段中表的上一个事务之前的版本信息，决定是否可以清理undo log的日志空间。
+
+
+
+
+
+mysql隔离级别
+事务的四个特性：ACID
+原子性A:事务是数据库的逻辑工作单位，事务中包含的操作要么都做，要么都不做。
+
+一致性C：事务执行的结果必须是使数据库从一个一致性状态变到另一个一致性状态。
+因此当数据库只包含成功事务提交的结果时，就说数据库处于一致性状态。如果数据库系统 运行中发生故障，有些事务尚未完成就被迫
+中断，这些未完成事务对数据库所做的修改有一部分是已写入物理数据库，这个时候数据库就处于一种不正确的状态，
+就比如转账业务（减少A账户余额，增加B账户，不可能只减少A或 只增加B吧  应该要一致。）
+
+
+隔离性I：一个事务的执行不能被其他事务干扰，每个事务的执行过程是相对独立的。
+
+持久性D: 一个事务一旦提交，他对数据库中数据的改变就应该是永久的，当事务提交后，数据会持久化到硬盘。
+
+
+事务隔离级别：
+读未提交（READ UNCOMMITTED）、
+读提交 （READ COMMITTED）、
+可重复读 （REPEATABLE READ）、
+串行化 （SERIALIZABLE）。
+
+
+Mysql的默认隔离级别是REPEATABLE-READ（可重复读）
+
+
+读未提交会读到另一个事务的未提交的数据，产生账读问题，
+
+读提交解决了脏读问题，出现了不可重复读，即在一个事务任意时刻读到的数据可能不一样，
+可能会受到其它事务对数据修改提交后的影响，一般是对于update的操作。
+
+可重复读解决了之前 不可重复读和脏读的问题，但是又带来了幻读的问题， 幻读一般是针对insert操作。
+例如：第一个事务查询一个user表id=100，发现不存在该数据行，这个时候第二个事务进来了，
+新增了一条id=100的数据并进行了提交事务。
+
+这个时候 第一个事务新增一条id=100的数据行会报主键冲突，第一个事务再select一下，发现id=100的
+数据航已经存在，这就是幻读。
+
+测试，查询mysql的数据库隔离级别
+select @@transaction_isolation
+
+-- 他设置隔离级别的语句中set global transaction isolation level read uncommitted，
+-- 这里的global也可以换成session，global表示全局的，而session表示当前会话，也就是当前窗口有效
+
+set global transaction isolation level read uncommitted 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
