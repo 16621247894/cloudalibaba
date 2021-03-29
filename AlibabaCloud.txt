@@ -455,8 +455,22 @@ CPU usage（1.5.0+ 版本）：当系统 CPU 使用率超过阈值即触发系�
 
 测试1：入口QPS（CPU），设置为1，1秒钟超过1次QPS，就会降级， 不管访问哪个接口 都是一样的， 但是这个限流方式不常用于生产，容易产生问题。
 
+-----------------------------------------------------------------------------
+自定义限流，解决代码膨胀问题
+使用一个方法一个熔断会造成以下问题
+1.系统默认的，没有体现我们自己的业务要求。
+2.自定义处理方法和业务代码耦合在一块，不直观。
+3.每个业务方法都添加一个兜底的，会代码膨胀。
+4.全局统一出发的方法没有体现，
 
-看到127了
+怎么做全局异常，设置一个类。CustomerBlockHandler，里面的方法必须是static方法，否则会报错，
+2个方法都是降级方法，其他的普通接口指向这个就可以了，比如说
+@SentinelResource(value = "customerBlockHandler",blockHandlerClass = CustomerBlockHandler.class,blockHandler = "handlderException")
+
+
+@SentinelResource不支持private
+
+开始看130
 
 
 网址。
