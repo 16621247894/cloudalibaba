@@ -18,7 +18,12 @@
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-web-servlet</artifactId>
         </dependency>
-
+        <!-- 公共组件模块-->
+        <dependency>
+            <groupId>com.zwq.springcloud</groupId>
+            <artifactId>cloud-api-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- SpringCloud alibaba nacos-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
