@@ -62,6 +62,8 @@ public class FlowLimitController {
     public String testHotkey(@RequestParam(value = "p1",required = false) String p1,
                              @RequestParam(value = "p2",required = false) String p2){
         log.info(Thread.currentThread().getName()+"调用");
+        /*String [] strs={"1"};
+        strs=new String[]{"1"};*/
         return "------testHotkey testHotkey";
     }
 
