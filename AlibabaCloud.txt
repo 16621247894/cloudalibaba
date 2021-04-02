@@ -470,6 +470,13 @@ CPU usage（1.5.0+ 版本）：当系统 CPU 使用率超过阈值即触发系�
 
 @SentinelResource不支持private
 
+实际工作中用
+sentinel整合ribbon+openFeign+fallback
+
+新建2个服务提供者
+cloudalibaba-provider-payment9004
+cloudalibaba-provider-payment9005
+
 开始看130
 
 
