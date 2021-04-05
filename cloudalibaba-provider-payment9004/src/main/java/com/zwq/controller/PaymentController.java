@@ -26,6 +26,9 @@ public class PaymentController {
     @GetMapping("/paymentSql/{id}")
     public CommonResult<Payment> paymentSql(@PathVariable("id") Long id){
         Payment payment=hashMap.get(id);
+        if (id == 4) {
+            throw new IllegalArgumentException("IllegalArgumentException ,非法参数问题");
+        }
         return new CommonResult<Payment>(200,"from mysql serverPort:"+serverPort,payment);
 
     }

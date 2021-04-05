@@ -1,10 +1,9 @@
 server:
-  port: 8401
-
+  port: 85
 
 spring:
   application:
-    name: cloudalibaba-sentinel-service
+    name: nacos-order-consumer
   cloud:
     nacos:
       discovery:
@@ -19,20 +18,18 @@ spring:
       web-context-unify: false
       filter:
         enabled: false
-      datasource:
-        ds1:
-          nacos:
-            server-addr: localhost:8848
-            dataId: ${spring.application.name}
-            groupId: DEFAULT_GROUP
-            data-type: json
-            rule-type: flow
-
-
-
 
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: "*"
+
+#消费者将要去注册中心访问的的服务提供者名称
+service-url:
+  nacos-user-service: http://nacos-payment-provider
+
+#激活sentinel对Feign的支持
+feign:
+  sentinel:
+    enabled: true

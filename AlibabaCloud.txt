@@ -473,15 +473,76 @@ CPU usage（1.5.0+ 版本）：当系统 CPU 使用率超过阈值即触发系�
 实际工作中用
 sentinel整合ribbon+openFeign+fallback
 
+cloudalibaba-consumer-nacos-order84是Ribbon整合
 新建2个服务提供者
 cloudalibaba-provider-payment9004
 cloudalibaba-provider-payment9005
+之后创建服务调用者84
+cloudalibaba-consumer-nacos-order84
+进行限流和降级说明
+fallback是执行程序异常走的兜底方法
+blockHandler 负责的是sentinel配置违规
+如果两个都配置的情况，java程序有异常并且QPS比较高的情况下，
+则限流降级而抛出BlockException时 只会进入blockHandler处理逻辑。
 
-开始看130
+cloudalibaba-consumer-nacos-order85是openFeign整合，注意依赖的maven包
+yml中激活sentinel对Feign的支持
+feign.sentinel.enabled=true
+启动类中的修改 说明是和Feign整合
+@EnableFeignClients
+
+具体使用看项目cloudalibaba-consumer-nacos-order85
+-------------------------------------------------------------------------------------
+sentinel配置持久化
+将限流配置规则持久化进Nacos保存，只要刷新8401某个rest地址，sentinel控制台
+的流控规则就能看到，只要Nacos里面的配置不删除，针对8401上sentinel上的流控规则就持续有效
+具体配置
+pom中新增
+<!--后续做持久化会用到 -->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
+        </dependency>
+
+yml中新增
+sentinel下面的配置
+datasource:
+        ds1:
+          nacos:
+            server-addr: localhost:8848
+            dataId: ${spring.application.name}
+            groupId: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
+
+在nacos注册中心新增配置
+Data ID: cloudalibaba-sentinel-service
+GROUP: DEFAULT_GROUP
+配置格式为json
+内容为以下
+[{
+    "resource": "byUrl",
+    "limitApp": "default",
+    "grade": 1,
+    "count": 1,
+    "strategy": 0,
+    "controlBehavior": 0,
+    "clusterMode": false
+
+}]
+
+配置说明
+resource是资源名称
+limitApp 来源应用
+grade： 阈值类型  0表示线程数  1表示QPS
+count：单机阈值
+strategy：流控模式，0表示直接，1关联，2链路
+controlBehavior 流控效果：0快速失败，1表示Warm Up。2表示排队等待
+clusterMode 是否集群
 
 
-网址。
-https://www.cnblogs.com/qlqwjy/p/13909052.html
+-------------------------------------------------------------------------------------
+分布式事务Seata
 
 
 
