@@ -588,6 +588,8 @@ seata_storage:存储库存的数据库      t_storage
 seata_account:账户信息的数据库      t_account
 创建sql在src目录下
 3个库中都需要建立各自的回滚日志表undo_log
+地址为
+https://github.com/seata/seata/blob/develop/script/client/at/db/mysql.sql
 
 
 
