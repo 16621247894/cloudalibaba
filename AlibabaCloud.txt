@@ -596,7 +596,8 @@ Order-Module
 Storage-Module
 Account-Module
 
-创建seata-order-service2001
+创建seata-order-service2001,创建seata-storage-service2002,
+注意resources里面的file.conf中service的vgroupMapping
 
 
 

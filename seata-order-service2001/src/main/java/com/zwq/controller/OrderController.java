@@ -1,24 +1,46 @@
 package com.zwq.controller;
 
-import com.zwq.dao.OrderDao;
+import com.zwq.domain.CommonResult;
+import com.zwq.service.OrderService;
 import com.zwq.domain.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 
-@RestController("/order")
+@RestController
 public class OrderController {
 
     @Autowired
-    private OrderDao  orderDao;
+    private OrderService orderService;
 
-    @PostMapping
-    public boolean save(){
-        Order order=new Order(null,1L,1L,1,new BigDecimal(25),1);
-        boolean res=orderDao.save(order);
-        System.out.println("获取的res:"+res);
-        return res;
+
+    /**
+     * 添加订单
+     * @return
+     */
+    @PostMapping("/order")
+    public CommonResult save(Order order) {
+        orderService.create(order);
+        return new CommonResult(200,"订单创建成功");
     }
+
+    /**
+     * 修改订单状态
+     * @return
+     */
+    /*@PutMapping("/order")
+    public boolean update(){
+        Order order=new Order();
+        order.setId(1L);
+        order.setStatus(0);
+        boolean res=orderDao.updateById(order);
+        return res;
+    }*/
+
+
+
 }
