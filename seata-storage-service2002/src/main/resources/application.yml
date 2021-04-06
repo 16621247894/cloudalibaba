@@ -11,7 +11,7 @@ spring:
         #Nacos服务注册中心地址
     alibaba:
       seata:
-        #自定义事务组名称需要与seata-server中的对应  TODO
+        #自定义事务组名称需要与seata-server中的对应
         tx-service-group: fsp_tx_group
     sentinel:
       transport:
