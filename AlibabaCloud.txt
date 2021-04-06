@@ -573,7 +573,7 @@ https://github.com/seata/seata/tags
 2.之后创建需要数据库的表
 在README-zh.md里面找到
 https://github.com/seata/seata/tree/develop/script/server
-选择mysql
+选择mysql，创建数据库seata
 3.修改registry.conf文件
 设置type为nacos
 
@@ -590,6 +590,13 @@ seata_account:账户信息的数据库      t_account
 3个库中都需要建立各自的回滚日志表undo_log
 地址为
 https://github.com/seata/seata/blob/develop/script/client/at/db/mysql.sql
+
+业务需求    下订单----减少库存-------扣余额------改订单状态
+Order-Module
+Storage-Module
+Account-Module
+
+创建seata-order-service2001
 
 
 
