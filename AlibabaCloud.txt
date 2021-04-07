@@ -597,8 +597,23 @@ Storage-Module
 Account-Module
 
 创建seata-order-service2001,创建seata-storage-service2002,
-注意resources里面的file.conf中service的vgroupMapping
+seata-account-service2003
 
+注意resources里面的file.conf中service的vgroupMapping
+@Param 和@RequestParam 区别，  @Param是用于dao层 和mapper.xml文件接收参数
+@requestParam是controller接收外面url发送的参数
+
+seata部署集群----》
+有2种方式 配置信息是完全一样的，
+1.3个服务器分别部署然后用nginx调用
+2. 一个服务器部署3个节点，启动seata-server.bat -p 18091 -n 1
+说明-p是端口 -n 1 表示第一个节点
+
+开始看原理了
+
+
+seata中分布式事务
+@GlobalTransactional(name = "fsp-create-order",rollbackFor = Exception.class)
 
 
 开始看142

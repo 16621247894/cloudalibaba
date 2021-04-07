@@ -1,0 +1,48 @@
+server:
+  port: 2003
+
+spring:
+  application:
+    name: seata-account-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        #Nacos服务注册中心地址
+    alibaba:
+      seata:
+        #自定义事务组名称需要与seata-server中的对应
+        tx-service-group: fsp_tx_group
+    sentinel:
+      transport:
+        #配置Sentinel dashboard地址
+        dashboard: localhost:8080
+        #默认8719端口，假如呗占用会自动8719开始依次+1扫描，直至找到未被占用的端口
+        port: 8719
+      web-context-unify: false
+      filter:
+        enabled: false
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+    driver-class-name: com.mysql.jdbc.Driver              # mysql驱动包
+    url: jdbc:mysql://localhost:3306/seata_account?useUnicode=true&characterEncoding=utf-8&useSSL=false&rewriteBatchedStatements=true
+    username: root
+    password: root
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+
+#激活sentinel对Feign的支持
+feign:
+  sentinel:
+    enabled: true
+
+# Mybatis-Plus
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*Mapper.xml ## Mapper对应的 XML文件位置
+  type-aliases-package: com.zwq.entity  ## 别名包扫描路径

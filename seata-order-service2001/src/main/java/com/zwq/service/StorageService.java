@@ -2,7 +2,6 @@ package com.zwq.service;
 
 import com.zwq.domain.CommonResult;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(value = "seata-storage-service")
