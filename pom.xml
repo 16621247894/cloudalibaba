@@ -21,6 +21,13 @@
         <module>seata-storage-service2002</module>
         <module>seata-account-service2003</module>
         <module>bomb</module>
+        <module>seata-order-service2001TCC</module>
+        <module>seata-order-tcc-service2001</module>
+        <module>seata-storage-tcc-service2002</module>
+        <module>seata-account-tcc-service2003</module>
+        <module>cloudalibaba-common</module>
+        <module>cloudalibaba-pay-tcc-service3001</module>
+        <module>cloudalibaba-business-Tcc-service3002</module>
     </modules>
 
     <packaging>pom</packaging>
