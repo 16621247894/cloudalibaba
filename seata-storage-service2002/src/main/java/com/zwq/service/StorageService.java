@@ -10,4 +10,6 @@ public interface StorageService extends IService<Storage> {
 
     //需要一个扣减库存的方法
     void decrease(@Param("productId") Long productId, @Param("count")Integer count);
+
+    void getInfo();
 }
