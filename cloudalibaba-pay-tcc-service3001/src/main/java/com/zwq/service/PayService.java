@@ -1,4 +1,8 @@
 package com.zwq.service;
 
-public class PayService {
+import org.springframework.stereotype.Service;
+
+@Service
+public interface PayService {
+    public boolean transfer(String merchantsId,String businessId, int amount) throws Exception;
 }

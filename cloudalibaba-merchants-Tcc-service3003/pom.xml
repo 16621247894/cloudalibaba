@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cloudalibaba-business-Tcc-service3002</artifactId>
+    <artifactId>cloudalibaba-merchants-Tcc-service3003</artifactId>
 
     <dependencies>
         <dependency>

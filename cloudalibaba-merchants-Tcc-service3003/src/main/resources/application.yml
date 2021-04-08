@@ -1,9 +1,9 @@
 server:
-  port: 3001
+  port: 3003
 
 spring:
   application:
-    name: seata-order-service
+    name: seata-merchants-service
   cloud:
     nacos:
       discovery:
