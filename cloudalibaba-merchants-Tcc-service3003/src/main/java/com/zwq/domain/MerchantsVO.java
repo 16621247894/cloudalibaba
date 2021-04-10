@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @TableName("merchants_bank_account")
 public class MerchantsVO {
 
-    @TableId(value = "business_id",type = IdType.AUTO)
+    @TableId(value = "merchants_id",type = IdType.AUTO)
     private int merchantsId;
 
     /**

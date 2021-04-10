@@ -40,5 +40,11 @@ public class ResultHolder {
         }
     }
 
+    public static Map<Class<?>, Map<String, String>> getMap() {
+        return map;
+    }
 
+    public static void setMap(Map<Class<?>, Map<String, String>> map) {
+        ResultHolder.map = map;
+    }
 }

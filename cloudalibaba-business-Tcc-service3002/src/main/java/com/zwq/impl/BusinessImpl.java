@@ -27,13 +27,13 @@ public class BusinessImpl extends ServiceImpl<BusinessMapper, BusinessVO> implem
     @Override
     public boolean businessTransfer(BusinessActionContext businessActionContext, Map<String, Object> params) throws Exception {
         log.info("======>工商银行开始校验转账账号.......");
-        // 分布式事务ID
-        final String xid = businessActionContext.getXid();
-        // 交易金额
-        int amount = Integer.parseInt(params.get("amount").toString());
-        // id
-        int businessId = Integer.parseInt(params.get("businessId").toString());
         try {
+            // 分布式事务ID
+            final String xid = businessActionContext.getXid();
+            // 交易金额
+            int amount = Integer.parseInt(params.get("amount").toString());
+            // id
+            int businessId = Integer.parseInt(params.get("businessId").toString());
             // 校验账户余额是否充足
             BusinessVO businessBankAccount = getById(businessId);
             if (businessBankAccount == null) {
@@ -58,7 +58,7 @@ public class BusinessImpl extends ServiceImpl<BusinessMapper, BusinessVO> implem
             log.info("工商银行转账校验结束: account:" + businessId + " amount:" + amount + ", dtx transaction id: " + xid);
             //事务成功，保存一个标识，供第二阶段进行判断
             ResultHolder.setResult(getClass(), xid, "p");
-
+            //int a=20/0;
             return true;
         } catch (Exception e) {
             e.printStackTrace();
