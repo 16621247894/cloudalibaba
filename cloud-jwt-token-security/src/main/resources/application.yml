@@ -1,0 +1,54 @@
+server:
+  port: 8080
+
+#flyway必须从v2开始
+spring:
+  #配置SpringSecurity
+  security:
+    user:
+      name: user
+      password: user
+      roles: admin #拥有管理员的角色 默认配置SpringSecurity的用户
+  #配置静态模板
+  thymeleaf:
+    prefix: classpath:/templates/
+    check-template-location: true
+    suffix: .html
+    encoding: UTF-8
+    content-type: text/html
+    mode: HTML5
+    cache: false
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    timeout: 1000
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1ms
+        max-idle: 8
+        min-idle: 0
+
+
+
+  application:
+    name: cloud-payment-service  #名字一般不要改变 就是注册中心的名称
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource            # 当前数据源操作类型
+    driver-class-name: com.mysql.cj.jdbc.Driver              # mysql驱动包
+    url: jdbc:mysql://localhost:3306/world?useUnicode=true&characterEncoding=utf-8&useSSL=false&rewriteBatchedStatements=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+  flyway:
+    baseline-on-migrate: true
+    locations: classpath:/db/migration
+    check-location: true
+    enabled: true
+
+
+
+# Mybatis-Plus
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*Mapper.xml ## Mapper对应的 XML文件位置
+  type-aliases-package: com.zwq.entity  ## 别名包扫描路径
