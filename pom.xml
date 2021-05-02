@@ -27,6 +27,7 @@
         <module>cloudalibaba-business-Tcc-service3002</module>
         <module>cloudalibaba-merchants-Tcc-service3003</module>
         <module>cloud-jwt-token-security</module>
+        <module>cloud-jwt-token-security-oauth2</module>
 
     </modules>
 
